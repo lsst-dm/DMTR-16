@@ -24,7 +24,7 @@ For comparisons, the previous large scale test can be found in \citeds{DMTR-13}.
 \textbf{.MYI size {[}TB{]}}\tabularnewline
 \midrule
 \endhead
-Object & 3,777,968,880 & ~4.6 & 0.1\tabularnewline
+Object & 3,777,968,880 & 4.6 & 0.1\tabularnewline
 Source & 69,744,689,072 & 33.6 & 3.6\tabularnewline
 ForcedSource & 344,034,271,380 & 11.0 & 8.7\tabularnewline
 \bottomrule
@@ -32,9 +32,8 @@ ForcedSource & 344,034,271,380 & 11.0 & 8.7\tabularnewline
 
 Total MySQL data dir size: 62.4 TB
 
-DR1 numbers are available at~
-\href{https://www.lsst.org/scientists/keynumbers}{LSST Key
-Numbers}~under "Data Releases"
+DR1 numbers are available in \citeds{Document-16168}
+under ``Data Releases''
 
 Object and Source are now at \textasciitilde{}20\% of DR1 level and
 ForcedSource has more than 20\% of DR1.
@@ -80,10 +79,10 @@ summary}\label{testing-methodology-and-summary}
 
 The cluster is divided into two sets of 25 nodes each, and each
 sub-cluster has the 20\% DR1 dataset loaded in. These KPM tests were
-performed on the second half, on nodes ccqserv125-ccqserv149~(DR1 is
-expected to be on~92 nodes)
+performed on the second half, on nodes \texttt{ccqserv125} - \texttt{ccqserv149} (DR1 is
+expected to be on 92 nodes)
 
-Queries are selected from a query pool that is divided into "types"
+Queries are selected from a query pool that is divided into ``types''
 representing different usage patterns as well as expected support for
 baseline requirements. Threads in the count of number of simultaneous
 queries to be tested are spawned, each managing an open connection to
@@ -91,104 +90,104 @@ the qserv proxy and repeatedly picking random queries for its designated
 pool while sleeping when required.
 
 The actual program that we used to drive the testing can be found
-at:~\href{https://github.com/lsst/qserv/blob/master/admin/tools/docker/deployment/in2p3/runQueries.py}{runQueries.py}
+at: \href{https://github.com/lsst/qserv/blob/master/admin/tools/docker/deployment/in2p3/runQueries.py}{runQueries.py}
 
-\subsection{\texorpdfstring{\textbf{Short
-queries}}{Short queries}}\label{short-queries}
+\subsection{Short queries}\label{short-queries}
 
 \begin{itemize}
-\item
-  Single object selection by ID: 0.18 sec
+\item Single object selection by ID: 0.18 sec
 
-  \begin{itemize}
-  \item
-    SELECT * FROM Object WHERE deepSourceId = 16968353272299750
-  \end{itemize}
-\item
-  Small spatial area selection from Object: 0.52 sec
+\begin{lstlisting}[language=SQL]
+SELECT * FROM Object WHERE deepSourceId = 16968353272299750
+\end{lstlisting}
 
-  \begin{itemize}
-  \item
-    SELECT COUNT(*) FROM Object WHERE qserv\_areaspec\_box(42.247928,
+
+\item Small spatial area selection from Object: 0.52 sec
+
+\begin{lstlisting}[language=SQL]
+SELECT COUNT(*) FROM Object WHERE qserv_areaspec_box(42.247928,
     38.874077, 42.273855, 39.034748)
-  \end{itemize}
+\end{lstlisting}
+
 \end{itemize}
 
-\subsection{\texorpdfstring{\textbf{Full table scans, single query at
+\subsection{Full table scans, single query at
 a
-time}}{Full table scans, single query at a time}}\label{full-table-scans-single-query-at-a-time}
+time}\label{full-table-scans-single-query-at-a-time}
 
 \begin{itemize}
 \item
   Object: \textasciitilde{}7 min
 
-  \begin{itemize}
-  \item
-    SELECT ra, decl, u\_psfFlux, g\_psfFlux, r\_psfFlux FROM Object
-    WHERE y\_shapeIxx BETWEEN 20 AND 20.2
-  \end{itemize}
+\begin{lstlisting}[language=SQL]
+SELECT ra, decl, u_psfFlux, g_psfFlux, r_psfFlux FROM Object
+    WHERE y_shapeIxx BETWEEN 20 AND 20.2
+\end{lstlisting}
+
 \item
   Source: \textasciitilde{}41 min
 
-  \begin{itemize}
-  \item
-    SELECT COUNT(*) FROM Source WHERE flux\_sinc BETWEEN 1 AND 1.1
-  \end{itemize}
+\begin{lstlisting}[language=SQL]
+SELECT COUNT(*) FROM Source WHERE flux\_sinc BETWEEN 1 AND 1.1
+\end{lstlisting}
+
 \item
   ForcedSource: \textasciitilde{}26 min
 
-  \begin{itemize}
-  \item
-    SELECT COUNT(*) FROM ForcedSource WHERE psfFlux BETWEEN 0.1 AND 0.2
-  \end{itemize}
+\begin{lstlisting}[language=SQL]
+SELECT COUNT(*) FROM ForcedSource WHERE psfFlux BETWEEN 0.1 AND 0.2
+\end{lstlisting}
+
 \end{itemize}
 
-\subsection{\texorpdfstring{\textbf{Full table joins, single query at
+
+\subsection{Full table joins, single query at
 a
-time}}{Full table joins, single query at a time}}\label{full-table-joins-single-query-at-a-time}
+time}\label{full-table-joins-single-query-at-a-time}
 
 \begin{itemize}
 \item
-  Object x Source: \textasciitilde{}56 min (See the "Notes and
-  Observations" section for details)
+  Object x Source: \textasciitilde{}56 min (See section~\ref{notes-and-observations}
+  for details)
 
-  \begin{itemize}
-  \item
-    SELECT o.deepSourceId, s.objectId, s.id, o.ra, o.decl FROM Object o,
-    Source s WHERE o.deepSourceId=s.objectId AND s.flux\_sinc BETWEEN
-    0.3 AND 0.31
-  \end{itemize}
+\begin{lstlisting}[language=SQL]
+SELECT o.deepSourceId, s.objectId, s.id, o.ra, o.decl
+    FROM Object o, Source s WHERE o.deepSourceId=s.objectId
+    AND s.flux_sinc BETWEEN 0.3 AND 0.31
+\end{lstlisting}
+
 \item
   Object x ForcedSource: \textasciitilde{}38 min
 
-  \begin{itemize}
-  \item
-    SELECT o.deepSourceId, f.psfFlux FROM Object o, ForcedSource f WHERE
-    o.deepSourceId=f.deepSourceId AND f.psfFlux BETWEEN 0.13 AND 0.14
-  \end{itemize}
+\begin{lstlisting}[language=SQL]
+SELECT o.deepSourceId, f.psfFlux FROM Object o, ForcedSource f
+    WHERE o.deepSourceId=f.deepSourceId
+    AND f.psfFlux BETWEEN 0.13 AND 0.14
+\end{lstlisting}
+
 \end{itemize}
 
-\subsection{\texorpdfstring{\textbf{Concurrent scans and stress
-test}}{Concurrent scans and stress test}}\label{concurrent-scans-and-stress-test}
+\subsection{Concurrent scans and stress
+test}\label{concurrent-scans-and-stress-test}
 
 \begin{itemize}
 \item
   2 Object scans: \textasciitilde{}8 min
 \item
-  5 Object scans: \textasciitilde{}8 min~(this shows that shared scans
+  5 Object scans: \textasciitilde{}8 min (this shows that shared scans
   implemented in W16 work as intended)
 \item
   Able to run up to 35 (30 on Object, 3 on Source and 2 on ForcedSource)
-  scans together~--- Object scans \textless{} 1h and Source scans
+  scans together --- Object scans \textless{} 1h and Source scans
   \textless{} 1.5h
 \item
   Attempt to run 50 scans causes the proxy to fail, solution is targeted
   in multi-czar deployment in the future
 \end{itemize}
 
-\subsection{\texorpdfstring{\textbf{\emph{Typical load test 60 LV +
+\subsection{\emph{Typical load test 60 LV +
 10 HV (+10\% if
-possible)}}}{Typical load test 60 LV + 10 HV (+10\% if possible)}}\label{typical-load-test-60-lv-10-hv-10-if-possible}
+possible)}}\label{typical-load-test-60-lv-10-hv-10-if-possible}
 
 \begin{itemize}
 \item
@@ -215,19 +214,19 @@ possible)}}}{Typical load test 60 LV + 10 HV (+10\% if possible)}}\label{typical
     108 Object scans --- Baseline: \textasciitilde{}1h per query, or 96
     in 24h
   \item
-    2 Source scans ---~Baseline: \textasciitilde{}12h per query, or 2 in
+    2 Source scans --- Baseline: \textasciitilde{}12h per query, or 2 in
     24h
   \item
-    2 ForcedSource scans~--- Baseline: \textasciitilde{}12h per query,
+    2 ForcedSource scans --- Baseline: \textasciitilde{}12h per query,
     or 2 in 24h
   \item
-    4 Object-Source joins ---~~Baseline: \textasciitilde{}12h per query
+    4 Object-Source joins --- Baseline: \textasciitilde{}12h per query
     or 4 in 24h
   \item
-    2 Object-ForcedSource joins~--- Baseline: \textasciitilde{}12h per
+    2 Object-ForcedSource joins --- Baseline: \textasciitilde{}12h per
     query or 2 in 24h
   \item
-    27 NearNeighbor queries~--- Baseline: \textasciitilde{}1h per query,
+    27 NearNeighbor queries --- Baseline: \textasciitilde{}1h per query,
     or 24 in 24h
 
     \begin{itemize}
@@ -241,7 +240,7 @@ possible)}}}{Typical load test 60 LV + 10 HV (+10\% if possible)}}\label{typical
   \begin{itemize}
   \item
     Overall size of Low Volume results was \textasciitilde{}70GB:
-    \textbf{128 KB/query}
+    \textbf{128 kB/query}
   \item
     Overall size of High Volume results was \textasciitilde{}7GB:
     \textbf{48 MB/query}
@@ -251,40 +250,45 @@ possible)}}}{Typical load test 60 LV + 10 HV (+10\% if possible)}}\label{typical
 
   \begin{itemize}
   \item
-    Low Volume queries~\textbf{3.23 sec/query} --- Baseline: should be
-    under 10
-    sec\\[2\baselineskip]\includegraphics[width=6.50764in,height=4.18472in]{Picture1}
+    Low Volume queries \textbf{3.23 sec/query} --- Baseline: should be
+    under 10 sec. See Fig.~\ref{fig:lowvol}.
 
-    \begin{itemize}
-    \item
-      Histogram for all Low Volume query times, note the log scale on
-      the Y axis
-    \end{itemize}
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{LV_times}
+    \caption{Histogram for all Low Volume query times, note the log scale on
+  the Y axis.}
+    \label{fig:lowvol}
+  \end{center}
+\end{figure}
+
   \item
-    Object scans \textbf{15.15 min/query} ~--- Baseline: should be under
+    Object scans \textbf{15.15 min/query} --- Baseline: should be under
     1 hour
   \item
     Source scans \textbf{2.7 hr/query} --- Baseline: should be under 12
     hours
   \item
-    ForcedSource scans~\textbf{2.7 hr/query}~--- Baseline: should be
+    ForcedSource scans \textbf{2.7 hr/query}--- Baseline: should be
     under 12 hours
   \item
-    Object-Source joins~\textbf{2.7 hr/query} ---~Baseline: should be
+    Object-Source joins \textbf{2.7 hr/query} --- Baseline: should be
     under 12 hours
   \item
-    Object-ForcedSource joins~\textbf{2.7 hr/query}~---~Baseline: should
+    Object-ForcedSource joins \textbf{2.7 hr/query} --- Baseline: should
     be under 12 hours
   \item
-    NearNeighbor queries~\textbf{16.6 min/query}~---~Baseline: should be
-    under 12
-    hours\\[2\baselineskip]\includegraphics[width=6.50764in,height=4.18472in]{Picture2}
+    NearNeighbor queries \textbf{16.6 min/query} --- Baseline: should be
+    under 12 hours. See Fig.~\ref{fig:highvol}.
 
-    \begin{itemize}
-    \item
-      Histogram for all High Volume query times, note the clear
-      difference in Object and Source scans
-    \end{itemize}
+    \begin{figure}
+      \begin{center}
+        \includegraphics[width=0.8\textwidth]{HV_times}
+        \caption{Histogram for all High Volume query times, note the clear
+        difference in Object and Source scans.}
+        \label{fig:highvol}
+      \end{center}
+    \end{figure}
   \end{itemize}
 \item
   Observations:
@@ -310,20 +314,17 @@ possible)}}}{Typical load test 60 LV + 10 HV (+10\% if possible)}}\label{typical
       for Low Volume queries has increased due to tests running from one
       submit node
     \item
-      For these issues, see~
-      \href{https://jira.lsstcorp.org/browse/DM-9757}{DM-9757} - Getting
-      issue details... STATUS ~
-      \href{https://jira.lsstcorp.org/browse/DM-10360}{DM-10360} -
-      Getting issue details... STATUS ~and~
-      \href{https://jira.lsstcorp.org/browse/DM-10366}{DM-10366} -
-      Getting issue details... STATUS
+      For these issues, see
+      \href{https://jira.lsstcorp.org/browse/DM-9757}{DM-9757},
+      \href{https://jira.lsstcorp.org/browse/DM-10360}{DM-10360}, and
+      \href{https://jira.lsstcorp.org/browse/DM-10366}{DM-10366}.
     \end{itemize}
   \end{itemize}
 \end{itemize}
 
-\subsection{\texorpdfstring{\textbf{\emph{Heavy load test 100 LV + 20
+\subsection{\emph{Heavy load test 100 LV + 20
 HV (+10\% if
-possible)}}}{Heavy load test 100 LV + 20 HV (+10\% if possible)}}\label{heavy-load-test-100-lv-20-hv-10-if-possible}
+possible)}}\label{heavy-load-test-100-lv-20-hv-10-if-possible}
 
 \begin{itemize}
 \item
@@ -357,7 +358,7 @@ possible)}}}{Heavy load test 100 LV + 20 HV (+10\% if possible)}}\label{heavy-lo
   \begin{itemize}
   \item
     Overall size of Low Volume results was
-    \textasciitilde{}130GB:~\textbf{160 KB/query}
+    \textasciitilde{}130GB: \textbf{160 kB/query}
   \item
     Overall size of High Volume results was \textasciitilde{}8GB:
     \textbf{38 MB/query}
@@ -367,19 +368,19 @@ possible)}}}{Heavy load test 100 LV + 20 HV (+10\% if possible)}}\label{heavy-lo
 
   \begin{itemize}
   \item
-    Low Volume queries~\textbf{9.98 sec/query}
+    Low Volume queries \textbf{9.98 sec/query}
   \item
-    Object scans~\textbf{24 min/query}
+    Object scans \textbf{24 min/query}
   \item
-    Source scans~\textbf{4.44 hr/query}
+    Source scans \textbf{4.44 hr/query}
   \item
-    ForcedSource scans~\textbf{4.44 hr/query}
+    ForcedSource scans \textbf{4.44 hr/query}
   \item
-    Object-Source joins~\textbf{4.44 hr/query}
+    Object-Source joins \textbf{4.44 hr/query}
   \item
-    Object-ForcedSource joins~\textbf{4,44 hr/query}
+    Object-ForcedSource joins \textbf{4,44 hr/query}
   \item
-    NearNeighbor queries~\textbf{24 min/query}
+    NearNeighbor queries \textbf{24 min/query}
   \end{itemize}
 \item
   Observations:
@@ -399,101 +400,101 @@ possible)}}}{Heavy load test 100 LV + 20 HV (+10\% if possible)}}\label{heavy-lo
 
 \begin{itemize}
 \item
-  \emph{Concurrency maintained:}~With double the data from S15 we
+  \emph{Concurrency maintained:} With double the data from S15 we
   successfully ran simultaneous queries up to and more than the baseline
   requirements for 20\% DR1
 \item
-  \emph{Robustness improved:}~Although the tests were run for 24 hours
+  \emph{Robustness improved:} Although the tests were run for 24 hours
   in S15 too, these test runs have been performed multiple times and
   continuously over weeks without any Qserv services failing or needing
   restarts
 \item
-  \emph{Shared Scan implementation:}~Qserv is able to handle
+  \emph{Shared Scan implementation:} Qserv is able to handle
   successively larger number of scans on the same table and perform them
-  for a similar cost/time.~
+  for a similar cost/time.
 \end{itemize}
 
 \section{Query Templates Used}\label{query-templates-used}
 
-The actual query pool used in these tests is listed
-\href{file:////download/attachments/54854103/query_pools.txt\%3fversion=1\&modificationDate=1494281645000\&api=v2}{here}.
+The actual query pool used in these tests is available from the \texttt{git}
+repository associated with this document.
 A sample of the query types used in each category is listed below.
 
 \begin{itemize}
 \item
   Trivial query that retrieves one row, using index
-\end{itemize}
 
-SELECT * FROM Object WHERE objectId = \textless{}objId\textgreater{}
+\begin{lstlisting}[language=SQL]
+SELECT * FROM Object WHERE objectId = <objId>
+\end{lstlisting}
 
-\begin{itemize}
 \item
   Counts
-\end{itemize}
 
-SELECT COUNT( * )~FROM Object
+\begin{lstlisting}[language=SQL]
+SELECT COUNT( * ) FROM Object
 
-SELECT COUNT( * )~FROM Source
+SELECT COUNT( * ) FROM Source
 
-SELECT COUNT( * )~FROM ForcedSource
+SELECT COUNT( * ) FROM ForcedSource
+\end{lstlisting}
 
-\begin{itemize}
 \item
   Spatially restricted query, small area of sky, should return small
   number of rows (say \textless{}100)
-\end{itemize}
 
-SELECT COUNT( * )\\
-FROM Object\\
-WHERE ra\_PS BETWEEN 1 AND 2\\
-AND decl\_PS BETWEEN 3 AND 4\\
-\{quote\}
+\begin{lstlisting}[language=SQL]
+SELECT COUNT( * )
+FROM Object
+WHERE ra_PS BETWEEN 1 AND 2
+AND decl_PS BETWEEN 3 AND 4
+\end{lstlisting}
 
-\begin{itemize}
 \item
   Full table scan, use some column in WHERE that is not indexes, make
   sure the number of results returned is sane (eg thousands, not
   millions)
-\end{itemize}
 
-SELECT objectId, ra\_PS, decl\_PS, \textless{}few other
-columns\textgreater{}\\
-FROM Object\\
-WHERE fluxToAbMag(iFlux\_PS) - fluxToAbMag(zFlux\_PS) \textgreater{} 4
+\begin{lstlisting}[language=SQL]
+SELECT objectId, ra_PS, dec\_PS, <few other columns>
+FROM Object
+WHERE fluxToAbMag(iFlux_PS) - fluxToAbMag(zFlux_PS) > 4
+\end{lstlisting}
 
-\begin{itemize}
 \item
   Aggregation
-\end{itemize}
 
-SELECT COUNT(*) AS n,\\
-AVG(ra\_PS),\\
-AVG(decl\_PS), chunkId\\
-FROM Object\\
+\begin{lstlisting}[language=SQL]
+SELECT COUNT(*) AS n,
+AVG(ra_PS),
+AVG(decl_PS), chunkId
+FROM Object
 GROUP BY chunkId
+\end{lstlisting}
 
-\begin{itemize}
 \item
   Near neighbor
-\end{itemize}
 
-SELECT COUNT(*)\\
-FROM Object o1, Object o2\\
-WHERE qserv\_areaspec\_box(-5,-5,5,-5)\\
-AND scisql\_angSep(o1.ra\_PS, o1.decl\_PS, o2.ra\_PS, o2.decl\_PS)
-\textless{} 0.1
+\begin{lstlisting}[language=SQL]
+SELECT COUNT(*)
+FROM Object o1, Object o2
+WHERE qserv_areaspec_box(-5,-5,5,-5)
+AND scisql_angSep(o1.ra_PS, o1.decl_PS, o2.ra_PS, o2.decl_PS) < 0.1
+\end{lstlisting}
 
-\begin{itemize}
+
 \item
   Joins
-\end{itemize}
 
-SELECT o.objectId, s.sourceId, ra\_PS, decl\_PS, \textless{}few other
-columns\textgreater{}\\
-FROM Object\\
-JOIN SOURCE USING (objectId)\\
-WHERE fluxToAbMag(iFlux\_PS) - fluxToAbMag(zFlux\_PS) \textgreater{} 4\\
-AND \textless{}some restriction from source table\textgreater{}~
+\begin{lstlisting}[language=SQL]
+SELECT o.objectId, s.sourceId, ra_PS, decl_PS, <few other columns>
+FROM Object
+JOIN SOURCE USING (objectId)
+WHERE fluxToAbMag(iFlux_PS) - fluxToAbMag(zFlux_PS) > 4
+AND <some restriction from source table>
+\end{lstlisting}
+
+\end{itemize}
 
 \bibliography{lsst}
 \end{document}
