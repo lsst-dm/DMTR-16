@@ -1,51 +1,22 @@
-\section{F16 Large Scale Tests/KPMs}\label{f16-large-scale-testskpms}
+\documentclass[DM,toc]{lsstdoc}
+\usepackage{booktabs}
 
-\begin{itemize}
-\item
-  \protect\hyperlink{F16LargeScaleTestsux2fKPMs-DatasetInformat}{Dataset
-  Information}
-\item
-  \protect\hyperlink{F16LargeScaleTestsux2fKPMs-Hardware}{Hardware}
-\item
-  \protect\hyperlink{F16LargeScaleTestsux2fKPMs-Testingmethodol}{Testing
-  methodology and summary}
+\title[Qserv Test Fall 2016]{Qserv Fall 16 Large Scale Tests/KPMs}
+\author{Vaikunth~Thukral}
+\date{2017-05-09}
+\setDocRef{DMTR-16}
 
-  \begin{itemize}
-  \item
-    \protect\hyperlink{F16LargeScaleTestsux2fKPMs-Shortqueries}{Short
-    queries}
-  \item
-    \protect\hyperlink{F16LargeScaleTestsux2fKPMs-Fulltablescansux2c}{Full
-    table scans, single query at a time}
-  \item
-    \protect\hyperlink{F16LargeScaleTestsux2fKPMs-Fulltablejoinsux2c}{Full
-    table joins, single query at a time}
-  \item
-    \protect\hyperlink{F16LargeScaleTestsux2fKPMs-Concurrentscans}{Concurrent
-    scans and stress test}
-  \item
-    \protect\hyperlink{F16LargeScaleTestsux2fKPMs-Typicalloadtest}{Typical
-    load test 60 LV + 10 HV (+10\% if possible)}
-  \item
-    \protect\hyperlink{F16LargeScaleTestsux2fKPMs-Heavyloadtest10}{Heavy
-    load test 100 LV + 20 HV (+10\% if possible)}
-  \end{itemize}
-\item
-  \protect\hyperlink{F16LargeScaleTestsux2fKPMs-NotesandObserva}{Notes
-  and Observations}
-\item
-  \protect\hyperlink{F16LargeScaleTestsux2fKPMs-QueryTemplatesU}{Query
-  Templates Used}
-\end{itemize}
-
-This page contains results of the large scale tests at 20\% DR1 capacity
+\setDocAbstract{%
+This document contains results of the large scale tests at 20\% DR1 capacity
 that were run on CC-IN2P3 cluster during February-March 2017.
 
-For comparison, here is a link to the previous large scale
-test:~\href{file:////display/DM/S15+Large+Scale+Tests}{S15 Large Scale
-Tests}
+For comparisons, the previous large scale test can be found in \citeds{DMTR-13}.
+}
 
-\subsection{Dataset Information}\label{dataset-information}
+\begin{document}
+\maketitle
+
+\section{Dataset Information}\label{dataset-information}
 
 \begin{longtable}[]{@{}llll@{}}
 \toprule
@@ -68,7 +39,7 @@ Numbers}~under "Data Releases"
 Object and Source are now at \textasciitilde{}20\% of DR1 level and
 ForcedSource has more than 20\% of DR1.
 
-\subsection{Hardware}\label{hardware}
+\section{Hardware}\label{hardware}
 
 \begin{itemize}
 \item
@@ -104,7 +75,7 @@ ForcedSource has more than 20\% of DR1.
   1 x card iDRAC 7 Enterprise
 \end{itemize}
 
-\subsection{Testing methodology and
+\section{Testing methodology and
 summary}\label{testing-methodology-and-summary}
 
 The cluster is divided into two sets of 25 nodes each, and each
@@ -122,7 +93,7 @@ pool while sleeping when required.
 The actual program that we used to drive the testing can be found
 at:~\href{https://github.com/lsst/qserv/blob/master/admin/tools/docker/deployment/in2p3/runQueries.py}{runQueries.py}
 
-\subsubsection{\texorpdfstring{\textbf{Short
+\subsection{\texorpdfstring{\textbf{Short
 queries}}{Short queries}}\label{short-queries}
 
 \begin{itemize}
@@ -143,7 +114,7 @@ queries}}{Short queries}}\label{short-queries}
   \end{itemize}
 \end{itemize}
 
-\subsubsection{\texorpdfstring{\textbf{Full table scans, single query at
+\subsection{\texorpdfstring{\textbf{Full table scans, single query at
 a
 time}}{Full table scans, single query at a time}}\label{full-table-scans-single-query-at-a-time}
 
@@ -172,7 +143,7 @@ time}}{Full table scans, single query at a time}}\label{full-table-scans-single-
   \end{itemize}
 \end{itemize}
 
-\subsubsection{\texorpdfstring{\textbf{Full table joins, single query at
+\subsection{\texorpdfstring{\textbf{Full table joins, single query at
 a
 time}}{Full table joins, single query at a time}}\label{full-table-joins-single-query-at-a-time}
 
@@ -197,7 +168,7 @@ time}}{Full table joins, single query at a time}}\label{full-table-joins-single-
   \end{itemize}
 \end{itemize}
 
-\subsubsection{\texorpdfstring{\textbf{Concurrent scans and stress
+\subsection{\texorpdfstring{\textbf{Concurrent scans and stress
 test}}{Concurrent scans and stress test}}\label{concurrent-scans-and-stress-test}
 
 \begin{itemize}
@@ -215,7 +186,7 @@ test}}{Concurrent scans and stress test}}\label{concurrent-scans-and-stress-test
   in multi-czar deployment in the future
 \end{itemize}
 
-\subsubsection{\texorpdfstring{\textbf{\emph{Typical load test 60 LV +
+\subsection{\texorpdfstring{\textbf{\emph{Typical load test 60 LV +
 10 HV (+10\% if
 possible)}}}{Typical load test 60 LV + 10 HV (+10\% if possible)}}\label{typical-load-test-60-lv-10-hv-10-if-possible}
 
@@ -282,7 +253,7 @@ possible)}}}{Typical load test 60 LV + 10 HV (+10\% if possible)}}\label{typical
   \item
     Low Volume queries~\textbf{3.23 sec/query} --- Baseline: should be
     under 10
-    sec\\[2\baselineskip]\includegraphics[width=6.50764in,height=4.18472in]{media/image1.tmp}
+    sec\\[2\baselineskip]\includegraphics[width=6.50764in,height=4.18472in]{Picture1}
 
     \begin{itemize}
     \item
@@ -307,7 +278,7 @@ possible)}}}{Typical load test 60 LV + 10 HV (+10\% if possible)}}\label{typical
   \item
     NearNeighbor queries~\textbf{16.6 min/query}~---~Baseline: should be
     under 12
-    hours\\[2\baselineskip]\includegraphics[width=6.50764in,height=4.18472in]{media/image2.tmp}
+    hours\\[2\baselineskip]\includegraphics[width=6.50764in,height=4.18472in]{Picture2}
 
     \begin{itemize}
     \item
@@ -350,7 +321,7 @@ possible)}}}{Typical load test 60 LV + 10 HV (+10\% if possible)}}\label{typical
   \end{itemize}
 \end{itemize}
 
-\subsubsection{\texorpdfstring{\textbf{\emph{Heavy load test 100 LV + 20
+\subsection{\texorpdfstring{\textbf{\emph{Heavy load test 100 LV + 20
 HV (+10\% if
 possible)}}}{Heavy load test 100 LV + 20 HV (+10\% if possible)}}\label{heavy-load-test-100-lv-20-hv-10-if-possible}
 
@@ -424,7 +395,7 @@ possible)}}}{Heavy load test 100 LV + 20 HV (+10\% if possible)}}\label{heavy-lo
   \end{itemize}
 \end{itemize}
 
-\subsection{Notes and Observations}\label{notes-and-observations}
+\section{Notes and Observations}\label{notes-and-observations}
 
 \begin{itemize}
 \item
@@ -442,7 +413,7 @@ possible)}}}{Heavy load test 100 LV + 20 HV (+10\% if possible)}}\label{heavy-lo
   for a similar cost/time.~
 \end{itemize}
 
-\subsection{Query Templates Used}\label{query-templates-used}
+\section{Query Templates Used}\label{query-templates-used}
 
 The actual query pool used in these tests is listed
 \href{file:////download/attachments/54854103/query_pools.txt\%3fversion=1\&modificationDate=1494281645000\&api=v2}{here}.
@@ -523,3 +494,6 @@ FROM Object\\
 JOIN SOURCE USING (objectId)\\
 WHERE fluxToAbMag(iFlux\_PS) - fluxToAbMag(zFlux\_PS) \textgreater{} 4\\
 AND \textless{}some restriction from source table\textgreater{}~
+
+\bibliography{lsst}
+\end{document}
